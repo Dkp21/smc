@@ -1,0 +1,59 @@
+%{
+/*---------------------------------------------------------------------------
+    PURPOSE:
+        SMC file used to generate the TurnStile state machine.
+
+    NOTES:
+        See function headers for documentation/ usage within this file.
+---------------------------------------------------------------------------*/
+
+%}
+
+%header turnstile.h
+%start  TurnStileSm::TUNRNSTILE_LOCKED
+%class  TurnStile
+
+%map TurnStileSm
+%%
+
+
+// State        
+// Transition                                                          
+// Transition Guard                                                    
+// End State                           
+// Action(s)
+
+TUNRNSTILE_LOCKED
+Entry { }
+{
+    coin(is_valid : bool) // Transition
+    [ is_valid == true ]  // Transition Guard
+    TUNRNSTILE_UNLOCKED   // State
+    { unlock(); }         // Action
+
+    pass
+    nil
+    { alarm(); }
+
+    Default
+    nil
+    { unsupported(); }
+}
+
+TUNRNSTILE_UNLOCKED
+Entry { }
+{
+    pass
+    TUNRNSTILE_LOCKED
+    { lock(); }
+
+    coin(is_valid : bool)
+    [ is_valid == true ]
+    nil
+    { greeting(); }
+
+    Default
+    nil
+    { unsupported(); }
+}
+%%
